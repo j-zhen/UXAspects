@@ -1464,6 +1464,33 @@
                 },
                 {
                     "name": "@partition-map-selection-segment-bg"
+                },
+                {
+                    "name": "@partition1"
+                }
+                ,
+                {
+                    "name": "@partition9"
+                }
+                ,
+                {
+                    "name": "@partition10"
+                }
+                ,
+                {
+                    "name": "@partition11"
+                }
+                ,
+                {
+                    "name": "@partition12"
+                }
+                ,
+                {
+                    "name": "@partition13"
+                }
+                ,
+                {
+                    "name": "@partition14"
                 }
             ]
         },
