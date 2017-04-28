@@ -5,10 +5,10 @@
     <div class="facets-selected-header-container">
 
         <!-- Show The Selected Text -->
-        <span class="facets-selected-header-label">{{ selectedText }}</span>
+        <span class="facets-selected-header-label">{{ header }}</span>
 
         <!-- Add a Clear Button -->
-        <div class="facets-selected-clear-button" tabindex="0" [tooltip]="clearText" placement="left" (click)="deselectAllFacets()"
+        <div class="facets-selected-clear-button" tabindex="0" [tooltip]="clearTooltip" placement="left" (click)="deselectAllFacets()"
             (keyup.enter)="deselectAllFacets()"></div>
 
     </div>
@@ -17,7 +17,7 @@
     <div class="facets-selected-list">
 
         <!-- Show Selected Tags -->
-        <div class="facet-selected-tag" tabindex="0" *ngFor="let facet of selectedFacets" (click)="deselectFacet(facet)" (keyup.enter)="deselectFacet(facet)">
+        <div class="facet-selected-tag" tabindex="0" *ngFor="let facet of facets" (click)="deselectFacet(facet)" (keyup.enter)="deselectFacet(facet)">
 
             <!-- Display Label -->
             <span class="facet-selected-tag-label">{{ facet.title }}</span>
@@ -29,7 +29,7 @@
     </div>
 
     <!-- Show Message Here if No Facets Selected -->
-    <p class="facets-selected-none-label" *ngIf="emptyText && selectedFacets.length === 0">{{ emptyText }}</p>
+    <p class="facets-selected-none-label" *ngIf="emptyMessage && facets.length === 0">{{ emptyMessage }}</p>
 
     <!-- Any Facet Elements Should be Added Here By User -->
     <div class="facets-region">

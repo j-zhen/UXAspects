@@ -1,6 +1,4 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { FacetEvent, FacetSelect, FacetDeselect, FacetDeselectAll } from './events';
 
 @Component({
     selector: 'ux-facet-container',
@@ -8,53 +6,45 @@ import { FacetEvent, FacetSelect, FacetDeselect, FacetDeselectAll } from './even
 })
 export class FacetContainerComponent {
 
-    @Input() selectedText: string = 'Selected:';
-    @Input() clearText: string = 'Clear All';
-    @Input() emptyText: string = 'No Items';
+    @Input() header: string = 'Selected:';
+    @Input() clearTooltip: string = 'Clear All';
+    @Input() emptyMessage: string = 'No Items';
+    @Input() facets: Facet[] = [];
 
-    @Output() events: EventEmitter<FacetEvent> = new EventEmitter<FacetEvent>();
-
-    selectedFacets: Facet[] = [
-        {
-            title: '.doc'
-        },
-        {
-            title: '.txt'
-        }
-    ];
+    @Output() facetsChange: EventEmitter<Facet[]> = new EventEmitter<Facet[]>();
 
     selectFacet(facet: Facet): void {
         // push the facet on to the list
-        this.selectedFacets.push(facet);
+        this.facets.push(facet);
 
-        // broadcast the event through the observable
-        this.triggerEvent(new FacetSelect(facet));
+        // update the two way binding
+        this.facetsChange.emit(this.facets);
     }
 
     deselectFacet(facet: Facet): void {
 
         // find the index of the item in the selected array
-        let idx = this.selectedFacets.findIndex(selectedFacet => facet === selectedFacet);
+        let idx = this.facets.findIndex(selectedFacet => facet === selectedFacet);
 
-        // if match was found then remove it
-        if (idx > -1) {
-            this.selectedFacets.splice(idx, 1);
-
-            // broadcast event to the observale
-            this.triggerEvent(new FacetDeselect(facet));
+        // if match there was no match then finish
+        if (idx === -1) {
+            return;
         }
+
+        // remove the last item
+        this.facets.splice(idx, 1);
+
+        // update the two way binding
+        this.facetsChange.emit(this.facets);
     }
 
     deselectAllFacets(): void {
-        // send the deselect all event through the observable
-        this.triggerEvent(new FacetDeselectAll(this.selectedFacets));
 
         // empty the selected array
-        this.selectedFacets = [];
-    }
+        this.facets = [];
 
-    triggerEvent(e: FacetEvent) {
-        this.events.next(e);
+        // update the two way binding
+        this.facetsChange.emit(this.facets);
     }
 }
 

@@ -2,7 +2,13 @@
     
     <div class="row">
         <div class="col-md-3">
-            <ux-facet-container (events)="events"></ux-facet-container>
+            <ux-facet-container [(facets)]="facets">
+                <ux-facet-header></ux-facet-header>
+            </ux-facet-container>
+
+            <br>
+            <br>
+            <div class="btn button-primary" (click)="click()">Click</div>
         </div>
     </div>
 

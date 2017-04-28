@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { FacetEvent } from '../../components/facets/index';
-import { Subject } from 'rxjs/Subject';
+import { Facet } from '../../components/facets/index';
 
 @Component({
     selector: 'my-home',
@@ -8,5 +7,17 @@ import { Subject } from 'rxjs/Subject';
 })
 export class HomeComponent {
 
+    facets: Facet[] = [
+        {
+            title: '.doc'
+        },
+        {
+            title: '.ppt'
+        }
+    ];
 
+    click() {
+        let a = this.facets;
+        debugger;
+    }
 }
