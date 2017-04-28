@@ -20,13 +20,16 @@ export class OverflowTooltipDirective extends TooltipDirective {
         // store the element for later use
         this.nativeElement = elementRef.nativeElement;
 
+        // disable tooltip initially
+        this.isDisabled = true;
+
         // watch for any resize events
         resizeService.addResizeListener(elementRef.nativeElement, renderer2).debounceTime(200).subscribe(_ => {
             this.checkForOverflow();
         });
     }
 
-    private checkForOverflow() {
+    private checkForOverflow(): void {
         this.isDisabled = this.nativeElement.scrollWidth <= this.nativeElement.clientWidth &&
                           this.nativeElement.scrollHeight <= this.nativeElement.clientHeight;
     }

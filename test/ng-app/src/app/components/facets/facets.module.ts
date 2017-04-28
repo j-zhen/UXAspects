@@ -1,15 +1,18 @@
 import { NgModule } from '@angular/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { FacetContainerComponent } from './facet-container.component';
 import { CommonModule } from '@angular/common';
-import { FacetHeaderComponent } from './base/facet-header/facet-header.component';
 import { ResizeModule } from '../../directives/resize/index';
 import { OverflowTooltipModule } from '../../directives/overflow-tooltip/index';
-
+import { FacetContainerComponent } from './facet-container.component';
+import { FacetBaseComponent } from './base/facet-base/facet-base.component';
+import { FacetHeaderComponent } from './base/facet-header/facet-header.component';
+import { FacetCheckListComponent } from './facet-check-list/facet-check-list.component';
 
 const DECLARATIONS = [
     FacetContainerComponent,
-    FacetHeaderComponent
+    FacetHeaderComponent,
+    FacetBaseComponent,
+    FacetCheckListComponent
 ];
 
 @NgModule({

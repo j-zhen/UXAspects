@@ -12,7 +12,7 @@ export class ResizeDirective {
 
     constructor(private elementRef: ElementRef, private resizeService: ResizeService, private renderer: Renderer2) { }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.resizeService.addResizeListener(this.elementRef.nativeElement, this.renderer).debounceTime(this.throttle).subscribe(event => {
             this.resize.emit();
         });

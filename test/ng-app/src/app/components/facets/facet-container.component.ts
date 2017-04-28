@@ -1,4 +1,6 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { FacetEvent, FacetSelect, FacetDeselect, FacetDeselectAll } from './facet-events';
+import { Facet } from './models/facet';
 
 @Component({
     selector: 'ux-facet-container',
@@ -6,12 +8,15 @@ import { Component, Input, EventEmitter, Output } from '@angular/core';
 })
 export class FacetContainerComponent {
 
+    @Input() containerId: string;
     @Input() header: string = 'Selected:';
     @Input() clearTooltip: string = 'Clear All';
     @Input() emptyMessage: string = 'No Items';
+    
     @Input() facets: Facet[] = [];
 
     @Output() facetsChange: EventEmitter<Facet[]> = new EventEmitter<Facet[]>();
+    @Output() events: EventEmitter<FacetEvent> = new EventEmitter<FacetEvent>();
 
     selectFacet(facet: Facet): void {
         // push the facet on to the list
@@ -19,6 +24,9 @@ export class FacetContainerComponent {
 
         // update the two way binding
         this.facetsChange.emit(this.facets);
+
+        // trigger event
+        this.triggerEvent(new FacetSelect(facet));
     }
 
     deselectFacet(facet: Facet): void {
@@ -36,6 +44,9 @@ export class FacetContainerComponent {
 
         // update the two way binding
         this.facetsChange.emit(this.facets);
+
+        // trigger event
+        this.triggerEvent(new FacetDeselect(facet));
     }
 
     deselectAllFacets(): void {
@@ -45,10 +56,12 @@ export class FacetContainerComponent {
 
         // update the two way binding
         this.facetsChange.emit(this.facets);
+        
+        // trigger event
+        this.triggerEvent(new FacetDeselectAll());
     }
-}
 
-export interface Facet {
-    title: string;
-    count?: number;
+    private triggerEvent(event: FacetEvent) {
+        this.events.next(event);
+    }
 }

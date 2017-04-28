@@ -8,7 +8,7 @@
         <span class="facets-selected-header-label">{{ header }}</span>
 
         <!-- Add a Clear Button -->
-        <div class="facets-selected-clear-button" tabindex="0" [tooltip]="clearTooltip" placement="left" (click)="deselectAllFacets()"
+        <div class="facets-selected-clear-button" tabindex="0" [tooltip]="clearTooltip" placement="left" container="body" (click)="deselectAllFacets()"
             (keyup.enter)="deselectAllFacets()"></div>
 
     </div>
@@ -31,9 +31,9 @@
     <!-- Show Message Here if No Facets Selected -->
     <p class="facets-selected-none-label" *ngIf="emptyMessage && facets.length === 0">{{ emptyMessage }}</p>
 
-    <!-- Any Facet Elements Should be Added Here By User -->
-    <div class="facets-region">
-        <ng-content></ng-content>
-    </div>
-
+</div>
+    
+<!-- Any Facet Elements Should be Added Here By User -->
+<div class="facets-region">
+    <ng-content></ng-content>
 </div>

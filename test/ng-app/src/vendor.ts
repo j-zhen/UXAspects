@@ -12,3 +12,4 @@ import '../../../src/styles/ux-aspects.less';
 import './site.less';
 import './app/components/facets/facet-container.component.less';
 import './app/components/facets/base/facet-header/facet-header.component.less';
+import './app/components/facets/facet-check-list/facet-check-list.component.less';
