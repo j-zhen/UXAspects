@@ -1,0 +1,45 @@
+<div class="track" [ngClass]="options.track.height">
+
+    <div class="track-section track-lower" [style.flex-grow]="trackSizes.lower" [style.background]="trackColors.lower"></div>
+
+    <div class="thumb lower" [style.left]="thumbPositions.lower" [style.z-index]="thumbOrder.lower" [ngClass]="[ options.handles.style, options.track.height ]"
+        (mouseenter)="lowerThumbState.hover = true" (mouseleave)="lowerThumbState.hover = false">
+
+        <!--<div class="tooltip top tooltip-lower" [style.opacity]="tooltipLowerVisible ? 1 : 0">
+
+            <div class="tooltip-arrow" [style.border-top-color]="options.handles.callout.background"></div>
+
+            <div class="tooltip-inner" [style.background-color]="options.handles.callout.background" [style.color]="options.handles.callout.color">
+                {{ options.handles.callout.formatter(10) }}
+            </div>
+        </div>-->
+    </div>
+
+    <div class="track-section track-range" *ngIf="options.type === 'range'" [style.flex-grow]="trackSizes.range" [style.background]="trackColors.range">
+    </div>
+
+    <div class="thumb upper" *ngIf="options.type === 'range'" [style.left]="thumbPositions.upper" [style.z-index]="thumbOrder.upper"
+        [ngClass]="[ options.handles.style, options.track.height ]" (mouseenter)="upperThumbState.hover = true" (mouseleave)="upperThumbState.hover = false">
+
+        <!--<div class="tooltip top tooltip-upper" [style.opacity]="tooltipUpperVisible ? 1 : 0">
+
+            <div class="tooltip-arrow" [style.border-top-color]="options.handles.callout.background"></div>
+
+            <div class="tooltip-inner" *ngIf="options.type === 'range'" [style.background-color]="options.handles.callout.background"
+                [style.color]="options.handles.callout.color">
+                {{ options.handles.callout.formatter(100) }}
+            </div>
+        </div>-->
+    </div>
+
+    <div class="track-section track-higher" [style.flex-grow]="trackSizes.higher" [style.background]="trackColors.higher"></div>
+
+</div>
+
+<div class="tick-container" *ngIf="options.track.ticks.major.show || options.track.ticks.minor.show" [class.show-labels]="options.track.ticks.major.labels || options.track.ticks.minor.labels">
+
+    <div class="tick" *ngFor="let tick of ticks" [ngClass]="tick.type" [style.left.%]="tick.position" [hidden]="!tick.showTicks">
+        <div class="tick-indicator"></div>
+        <div class="tick-label" [hidden]="!tick.showLabels">{{ tick.label }}</div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+{
+  "name": "ux-aspects-test-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "author": "Ashley Hunter",
+  "devDependencies": {
+    "@types/chance": "^0.7.33",
+    "@types/node": "^7.0.13",
+    "angular2-template-loader": "^0.6.2",
+    "awesome-typescript-loader": "^3.1.2",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "html-loader": "^0.4.5",
+    "html-webpack-plugin": "^2.28.0",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "typescript": "^2.2.2",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.4"
+  },
+  "dependencies": {
+    "@angular/animations": "^4.0.3",
+    "@angular/common": "^4.0.3",
+    "@angular/compiler": "^4.0.3",
+    "@angular/compiler-cli": "^4.0.3",
+    "@angular/core": "^4.0.3",
+    "@angular/forms": "^4.0.3",
+    "@angular/http": "^4.0.3",
+    "@angular/platform-browser": "^4.0.3",
+    "@angular/platform-browser-dynamic": "^4.0.3",
+    "@angular/platform-server": "^4.0.3",
+    "@angular/router": "^4.0.3",
+    "bootstrap": "^3.3.7",
+    "chance": "^1.0.8",
+    "ngx-bootstrap": "^1.6.6",
+    "rxjs": "^5.3.0",
+    "zone.js": "^0.8.9"
+  }
+}
