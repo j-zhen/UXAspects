@@ -1,9 +1,10 @@
-<div class="track" [ngClass]="options.track.height">
+<div class="track" #track [class.narrow]="options.track.height === sliderSize.Narrow" [class.wide]="options.track.height === sliderSize.Wide">
 
     <div class="track-section track-lower" [style.flex-grow]="trackSizes.lower" [style.background]="trackColors.lower"></div>
 
-    <div class="thumb lower" [style.left]="thumbPositions.lower" [style.z-index]="thumbOrder.lower" [ngClass]="[ options.handles.style, options.track.height ]"
-        (mouseenter)="lowerThumbState.hover = true" (mouseleave)="lowerThumbState.hover = false">
+    <div class="thumb lower" #lowerThumb [style.left.%]="thumbPositions.lower" [style.z-index]="thumbOrder.lower" [class.button]="options.handles.style === sliderStyle.Button"
+        [class.line]="options.handles.style === sliderStyle.Line" [class.narrow]="options.track.height === sliderSize.Narrow"
+        [class.wide]="options.track.height === sliderSize.Wide">
 
         <!--<div class="tooltip top tooltip-lower" [style.opacity]="tooltipLowerVisible ? 1 : 0">
 
@@ -15,11 +16,12 @@
         </div>-->
     </div>
 
-    <div class="track-section track-range" *ngIf="options.type === 'range'" [style.flex-grow]="trackSizes.range" [style.background]="trackColors.range">
+    <div class="track-section track-range" *ngIf="options.type === sliderType.Range" [style.flex-grow]="trackSizes.range" [style.background]="trackColors.range">
     </div>
 
-    <div class="thumb upper" *ngIf="options.type === 'range'" [style.left]="thumbPositions.upper" [style.z-index]="thumbOrder.upper"
-        [ngClass]="[ options.handles.style, options.track.height ]" (mouseenter)="upperThumbState.hover = true" (mouseleave)="upperThumbState.hover = false">
+    <div class="thumb upper" #upperThumb [hidden]="options.type !== sliderType.Range" [style.left.%]="thumbPositions.upper" [style.z-index]="thumbOrder.upper"
+        [class.button]="options.handles.style === sliderStyle.Button" [class.line]="options.handles.style === sliderStyle.Line"
+        [class.narrow]="options.track.height === sliderSize.Narrow" [class.wide]="options.track.height === sliderSize.Wide">
 
         <!--<div class="tooltip top tooltip-upper" [style.opacity]="tooltipUpperVisible ? 1 : 0">
 
@@ -38,7 +40,8 @@
 
 <div class="tick-container" *ngIf="options.track.ticks.major.show || options.track.ticks.minor.show" [class.show-labels]="options.track.ticks.major.labels || options.track.ticks.minor.labels">
 
-    <div class="tick" *ngFor="let tick of ticks" [ngClass]="tick.type" [style.left.%]="tick.position" [hidden]="!tick.showTicks">
+    <div class="tick" *ngFor="let tick of ticks" [class.major]="tick.type === sliderTickType.Major" [class.minor]="tick.type === sliderTickType.Minor"
+        [style.left.%]="tick.position" [hidden]="!tick.showTicks">
         <div class="tick-indicator"></div>
         <div class="tick-label" [hidden]="!tick.showLabels">{{ tick.label }}</div>
     </div>
