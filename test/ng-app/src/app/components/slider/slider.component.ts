@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnInit, ElementRef, ViewChild, HostListener, AfterViewInit, Renderer2, OnDestroy } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit, ElementRef, ViewChild, HostListener, AfterViewInit, Renderer2, OnDestroy, DoCheck } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/observable/fromEvent';
@@ -9,7 +9,7 @@ import 'rxjs/add/operator/takeUntil';
     selector: 'ux-slider',
     templateUrl: './slider.component.html'
 })
-export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SliderComponent implements OnInit, AfterViewInit, DoCheck, OnDestroy {
 
     @Input() value: SliderValue | number;
     @Input() options: SliderOptions;
@@ -20,6 +20,10 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('upperThumb') upperThumb: ElementRef;
     @ViewChild('upperTooltip') upperTooltip: ElementRef;
     @ViewChild('track') track: ElementRef;
+
+    // store current values for deep change detection
+    private _value: SliderValue | number;
+    private _options: SliderValue | number;
 
     // expose enums to Angular view
     sliderType = SliderType;
@@ -62,13 +66,15 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
             hover: false,
             drag: false,
             position: 0,
-            order: 100
+            order: 100,
+            value: null as number
         },
         upper: {
             hover: false,
             drag: false,
             position: 0,
-            order: 101
+            order: 101,
+            value: null as number
         }
     };
 
@@ -114,12 +120,12 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     // observables for capturing movement
-    private lowerThumbDown$: Observable<MouseEvent>;
-    private upperThumbDown$: Observable<MouseEvent>;
-    private mouseMove$: Observable<MouseEvent> = Observable.fromEvent(document, 'mousemove');
-    private mouseUp$: Observable<MouseEvent> = Observable.fromEvent(document, 'mouseup');
-    private lowerDrag$: Subscription;
-    private upperDrag$: Subscription;
+    private lowerThumbDown: Observable<MouseEvent>;
+    private upperThumbDown: Observable<MouseEvent>;
+    private mouseMove: Observable<MouseEvent> = Observable.fromEvent(document, 'mousemove');
+    private mouseUp: Observable<MouseEvent> = Observable.fromEvent(document, 'mouseup');
+    private lowerDrag: Subscription;
+    private upperDrag: Subscription;
 
     constructor(private renderer: Renderer2) { }
 
@@ -135,6 +141,21 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setThumbState(SliderThumb.Upper, false, false);
     }
 
+    ngDoCheck() {
+
+        // check if value has changed
+        if (!this.deepCompare(this.value, this._value)) {
+            this.updateValues();
+            this._value = this.clone(this.value);
+        }
+
+        // check if options has changed
+        if (!this.deepCompare(this.options, this._options)) {
+            this.updateOptions();
+            this._options = this.clone(this.options, true);
+        }
+    }
+
     ngAfterViewInit() {
         // persistent tooltips will need positioned correctly at this stage
         this.updateTooltipPosition(SliderThumb.Lower);
@@ -142,39 +163,25 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.lowerDrag$.unsubscribe();
-        this.upperDrag$.unsubscribe();
+        this.lowerDrag.unsubscribe();
+        this.upperDrag.unsubscribe();
     }
 
-    getValue(thumb: SliderThumb): string | number {
-
-        // if a single value slider call the formatter function on the number
-        if (this.options.type === SliderType.Value) {
-            return this.options.handles.callout.formatter(this.value as number);
-        }
-
-        // inform typescript that the value will have a low and high property
-        this.value = this.value as SliderValue;
-
-        // otherwise return the output for the specific thumb
-        if (thumb === SliderThumb.Lower) {
-            return this.options.handles.callout.formatter(this.value.low);
-        } else {
-            return this.options.handles.callout.formatter(this.value.high);
-        }
+    getFormattedValue(thumb: SliderThumb): string | number {
+        return this.options.handles.callout.formatter(this.getThumbState(thumb).value);
     }
 
     private initObservables(): void {
 
         // when a user begins to drag lower thumb - subscribe to mouse move events until the mouse is lifted
-        this.lowerThumbDown$ = Observable.fromEvent(this.lowerThumb.nativeElement, 'mousedown');
-        this.lowerDrag$ = this.lowerThumbDown$.switchMap(() => this.mouseMove$.takeUntil(this.mouseUp$)).subscribe((event: MouseEvent) => {
+        this.lowerThumbDown = Observable.fromEvent(this.lowerThumb.nativeElement, 'mousedown');
+        this.lowerDrag = this.lowerThumbDown.switchMap(() => this.mouseMove.takeUntil(this.mouseUp)).subscribe((event: MouseEvent) => {
             this.updateThumbPosition(event, SliderThumb.Lower);
         });
 
         // when a user begins to drag upper thumb - subscribe to mouse move events until the mouse is lifted
-        this.upperThumbDown$ = Observable.fromEvent(this.upperThumb.nativeElement, 'mousedown');
-        this.upperDrag$ = this.upperThumbDown$.switchMap(() => this.mouseMove$.takeUntil(this.mouseUp$)).subscribe((event: MouseEvent) => {
+        this.upperThumbDown = Observable.fromEvent(this.upperThumb.nativeElement, 'mousedown');
+        this.upperDrag = this.upperThumbDown.switchMap(() => this.mouseMove.takeUntil(this.mouseUp)).subscribe((event: MouseEvent) => {
             this.updateThumbPosition(event, SliderThumb.Upper);
         });
     }
@@ -290,7 +297,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         let tooltip = this.getTooltip(thumb);
 
         // store the formatted label
-        tooltip.label = this.getValue(thumb).toString();
+        tooltip.label = this.getFormattedValue(thumb).toString();
     }
 
     private getThumbElement(thumb: SliderThumb): ElementRef {
@@ -358,7 +365,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         let value = ((this.options.track.max - this.options.track.min) * fraction) + this.options.track.min;
 
         // ensure value is valid
-        value = this.validatePosition(value, thumb);
+        value = this.validateValue(thumb, value);
 
         // snap to a tick if required
         value = this.snapToTick(value, thumb);
@@ -415,18 +422,12 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         let lowerLimit = this.options.track.min;
         let upperLimit = this.options.track.max;
 
-        // if range then update the limits
-        if (this.options.type === SliderType.Range) {
+        if (this.options.type === SliderType.Range && thumb === SliderThumb.Lower) {
+            upperLimit = this.thumbs.upper.value;
+        }
 
-            // inform typescript about the type here
-            this.value = this.value as SliderValue;
-
-            // determine which thumb we are dragging
-            if (thumb === SliderThumb.Lower) {
-                upperLimit = this.value.high;
-            } else {
-                lowerLimit = this.value.low;
-            }
+        if (this.options.type === SliderType.Range && thumb === SliderThumb.Upper) {
+            lowerLimit = this.thumbs.lower.value;
         }
 
         // Find the closest tick to the current position
@@ -442,23 +443,39 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         return closest.value;
     }
 
-    private validatePosition(value: number, thumb: SliderThumb): number {
+    private validateValue(thumb: SliderThumb, value: number): number {
 
         // if slider is not a range value is always valid
         if (this.options.type === SliderType.Value) {
             return value;
         }
 
-        // value will not be a number at this stage
-        this.value = this.value as SliderValue;
+        // check if value is with chart ranges
+        if (value > this.options.track.max) {
+            return this.options.track.max;
+        }
+
+        if (value < this.options.track.min) {
+            return this.options.track.min;
+        }
 
         // otherwise we need to check to make sure lower thumb cannot go above higher and vice versa
         if (thumb === SliderThumb.Lower) {
-            return value <= this.value.high ? value : this.value.high;
+
+            if (this.thumbs.upper.value === null) {
+                return value;
+            }
+
+            return value <= this.thumbs.upper.value ? value : this.thumbs.upper.value;
         }
 
         if (thumb === SliderThumb.Upper) {
-            return value >= this.value.low ? value : this.value.low;
+
+            if (this.thumbs.lower.value === null) {
+                return value;
+            }
+
+            return value >= this.thumbs.lower.value ? value : this.thumbs.lower.value;
         }
     }
 
@@ -477,6 +494,10 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         let lowerValue = typeof this.value === 'number' ? this.value : this.value.low;
         let upperValue = typeof this.value === 'number' ? this.value : this.value.high;
 
+        // validate values
+        lowerValue = this.validateValue(SliderThumb.Lower, lowerValue);
+        upperValue = this.validateValue(SliderThumb.Upper, upperValue);
+
         // calculate the positions as percentages
         let lowerPosition = (((lowerValue - this.options.track.min) / (this.options.track.max - this.options.track.min)) * 100);
         let upperPosition = (((upperValue - this.options.track.min) / (this.options.track.max - this.options.track.min)) * 100);
@@ -492,30 +513,33 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // update the value input
         this.setValue(lowerValue, upperValue);
-
-        // call the event emitter
-        this.valueChange.emit(this.value);
     }
 
     private setValue(low: number, high?: number): void {
+
+        this.thumbs.lower.value = low;
+        this.thumbs.upper.value = high;
+
+        let previousValue = this.value;
+
         this.value = this.options.type === SliderType.Value ? low : { low: low, high: high };
+
+        // call the event emitter if changes occured
+        if (this.value !== previousValue) {
+            this.valueChange.emit(this.value);
+
+            this.updateTooltipText(SliderThumb.Lower);
+            this.updateTooltipText(SliderThumb.Upper);
+        }
     }
 
     private setThumbValue(thumb: SliderThumb, value: number) {
-        let state = this.getThumbState(thumb);
 
-        if (this.options.type === SliderType.Value) {
-            this.value = value;
-        } else {
+        // update the thumb value
+        this.getThumbState(thumb).value = value;
 
-            this.value = this.value as SliderValue;
-
-            if (thumb === SliderThumb.Lower) {
-                this.value.low = value;
-            } else {
-                this.value.high = value;
-            }
-        }
+        // forward these changes to the value
+        this.setValue(this.thumbs.lower.value, this.thumbs.upper.value);
     }
 
     private updateTicks() {
@@ -624,6 +648,22 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         return destination;
+    }
+
+    private deepCompare(value1: any, value2: any): boolean {
+        return JSON.stringify(value1) === JSON.stringify(value2);
+    }
+
+    private clone(value: any, deep?: boolean): any {
+        if (typeof value !== 'object') {
+            return value;
+        }
+
+        if (!deep) {
+            return Object.assign({}, value);
+        }
+
+        return JSON.parse(JSON.stringify(value));
     }
 }
 

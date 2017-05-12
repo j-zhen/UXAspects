@@ -1,7 +1,9 @@
-import { SliderOptions, SliderType, SliderSnap, SliderCalloutTrigger, SliderStyle, SliderSize } from './../../components/slider/index';
+import { SliderOptions, SliderType, SliderSnap, SliderCalloutTrigger, SliderStyle, SliderSize, SliderValue } from './../../components/slider/index';
 import { Component } from '@angular/core';
 import { ColorService } from '../../services/color/color.service';
-
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
 import 'chance';
 
 @Component({
@@ -18,6 +20,9 @@ export class HomeComponent {
     slider6: SliderExample;
     slider7: SliderExample;
 
+    lowerValue: BehaviorSubject<number>;
+    upperValue: BehaviorSubject<number>;
+
     constructor(colorService: ColorService) {
 
         this.slider1 = {
@@ -28,7 +33,7 @@ export class HomeComponent {
                         major: {
                             steps: [0, 50, 100],
                             labels: true,
-                            formatter: function (value) {
+                            formatter: (value) => {
                                 if (value === 0) {
                                     return 'Minimum';
                                 }
@@ -222,10 +227,38 @@ export class HomeComponent {
                 }
             }
         };
+
+        this.lowerValue = new BehaviorSubject<number>(25);
+        this.upperValue = new BehaviorSubject<number>(75);
+
+        this.lowerValue.debounceTime(300).distinctUntilChanged().subscribe(value => {
+
+            if (!value || isNaN(Number(value))) {
+                return;
+            }
+
+            (<SliderValue>this.slider7.value).low = Number(value);
+        });
+
+        this.upperValue.debounceTime(300).distinctUntilChanged().subscribe(value => {
+
+            if (!value || isNaN(Number(value))) {
+                return;
+            }
+
+            (<SliderValue>this.slider7.value).high = Number(value);
+        });
+    }
+
+    updateValue(value: SliderValue) {
+        this.slider7.value = value;
+
+        this.lowerValue.next(value.low);
+        this.upperValue.next(value.high);
     }
 }
 
 interface SliderExample {
-    value: number | { low: number; high: number };
+    value: number | SliderValue;
     options: SliderOptions;
 }
