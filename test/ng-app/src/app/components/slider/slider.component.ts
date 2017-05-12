@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnInit, ElementRef, ViewChild, HostListener, AfterViewInit, Renderer2 } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit, ElementRef, ViewChild, HostListener, AfterViewInit, Renderer2, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/observable/fromEvent';
@@ -9,7 +9,7 @@ import 'rxjs/add/operator/takeUntil';
     selector: 'ux-slider',
     templateUrl: './slider.component.html'
 })
-export class SliderComponent implements OnInit, AfterViewInit {
+export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() value: SliderValue | number;
     @Input() options: SliderOptions;
@@ -118,6 +118,8 @@ export class SliderComponent implements OnInit, AfterViewInit {
     private upperThumbDown$: Observable<MouseEvent>;
     private mouseMove$: Observable<MouseEvent> = Observable.fromEvent(document, 'mousemove');
     private mouseUp$: Observable<MouseEvent> = Observable.fromEvent(document, 'mouseup');
+    private lowerDrag$: Subscription;
+    private upperDrag$: Subscription;
 
     constructor(private renderer: Renderer2) { }
 
@@ -137,6 +139,11 @@ export class SliderComponent implements OnInit, AfterViewInit {
         // persistent tooltips will need positioned correctly at this stage
         this.updateTooltipPosition(SliderThumb.Lower);
         this.updateTooltipPosition(SliderThumb.Upper);
+    }
+
+    ngOnDestroy() {
+        this.lowerDrag$.unsubscribe();
+        this.upperDrag$.unsubscribe();
     }
 
     getValue(thumb: SliderThumb): string | number {
@@ -161,13 +168,13 @@ export class SliderComponent implements OnInit, AfterViewInit {
 
         // when a user begins to drag lower thumb - subscribe to mouse move events until the mouse is lifted
         this.lowerThumbDown$ = Observable.fromEvent(this.lowerThumb.nativeElement, 'mousedown');
-        this.lowerThumbDown$.switchMap(() => this.mouseMove$.takeUntil(this.mouseUp$)).subscribe((event: MouseEvent) => {
+        this.lowerDrag$ = this.lowerThumbDown$.switchMap(() => this.mouseMove$.takeUntil(this.mouseUp$)).subscribe((event: MouseEvent) => {
             this.updateThumbPosition(event, SliderThumb.Lower);
         });
 
         // when a user begins to drag upper thumb - subscribe to mouse move events until the mouse is lifted
         this.upperThumbDown$ = Observable.fromEvent(this.upperThumb.nativeElement, 'mousedown');
-        this.upperThumbDown$.switchMap(() => this.mouseMove$.takeUntil(this.mouseUp$)).subscribe((event: MouseEvent) => {
+        this.upperDrag$ = this.upperThumbDown$.switchMap(() => this.mouseMove$.takeUntil(this.mouseUp$)).subscribe((event: MouseEvent) => {
             this.updateThumbPosition(event, SliderThumb.Upper);
         });
     }
@@ -283,7 +290,7 @@ export class SliderComponent implements OnInit, AfterViewInit {
         let tooltip = this.getTooltip(thumb);
 
         // store the formatted label
-        tooltip.label = this.options.handles.callout.formatter(state.position).toString();
+        tooltip.label = this.getValue(thumb).toString();
     }
 
     private getThumbElement(thumb: SliderThumb): ElementRef {
@@ -422,26 +429,17 @@ export class SliderComponent implements OnInit, AfterViewInit {
             }
         }
 
-        // filter ticks within the allowed range
-        ticks = ticks.filter(tick => tick.value >= lowerLimit && tick.value <= upperLimit);
+        // Find the closest tick to the current position
+        let closest = ticks.filter(tick => tick.value >= lowerLimit && tick.value <= upperLimit)
+            .reduceRight((previous, current) => {
 
-        // find the closest tick
-        let snapValue = 0,
-            distance = null;
+                let previousDistance = Math.max(previous.value, value) - Math.min(previous.value, value);
+                let currentDistance = Math.max(current.value, value) - Math.min(current.value, value);
 
-        for (let tick of ticks) {
+                return previousDistance < currentDistance ? previous : current;
+            });
 
-            // calculate the distance between this ticks value and our target
-            let tickDistance = Math.max(tick.value, value) - Math.min(tick.value, value);
-
-            // if this tick is closer than the previous closest then store this new tick
-            if (distance === null || tickDistance < distance) {
-                distance = tickDistance;
-                snapValue = tick.value;
-            }
-        }
-
-        return snapValue;
+        return closest.value;
     }
 
     private validatePosition(value: number, thumb: SliderThumb): number {
@@ -467,7 +465,6 @@ export class SliderComponent implements OnInit, AfterViewInit {
     private updateOptions() {
 
         // add in the default options that user hasn't specified
-        // Object.assign(this.options, this.defaultOptions, this.options);
         this.deepMerge(this.options, this.defaultOptions);
 
         this.updateTrackColors();
