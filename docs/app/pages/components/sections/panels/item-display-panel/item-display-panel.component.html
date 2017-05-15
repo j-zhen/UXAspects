@@ -1,0 +1,52 @@
+<h4>Item Display Panel Angular 4</h4>
+
+<div class="demo-attributes table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr class="table-header-dark">
+                <th class="listview-document-th"></th>
+                <th>NAME</th>
+                <th>AUTHOR</th>
+                <th>DATE MODIFIED</th>
+                <th>STORAGE (GB)</th>
+                <th class="text-center">STATUS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="clickable single-select" *ngFor="let item of items">
+                <td class="text-center">
+                    <div class="listview-page-icon"></div>
+                </td>
+                <td class="listview-text-emphasis">{{ item.document }}</td>
+                <td>
+                    <div>{{ item.name }}</div>
+                </td>
+                <td>{{ item.dateString }}</td>
+                <td class="spark-chart-col-width2">
+                    <p>SPARK GOES HERE!!!!</p>
+                </td>
+                <td class="text-center item-actions">
+                    <div class="hpe-icon" [class.text-secondary]="item.active" [class.hpe-checkmark]="item.active"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--<div class="modal fade" bsModal #staticModal="bs-modal" [config]="{backdrop: 'static'}"
+     tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Static modal</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="staticModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        This is static modal, backdrop click will not close it.
+        Click <b>&times;</b> to close modal.
+      </div>
+    </div>
+  </div>
+</div>-->

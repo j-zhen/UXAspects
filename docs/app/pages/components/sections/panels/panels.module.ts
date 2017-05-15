@@ -9,11 +9,15 @@ import { ComponentsItemDisplayPanelNg1Component } from './item-display-panel-ng1
 import { ComponentsItemDisplayPanelServiceNg1Component } from './item-display-panel-service-ng1/item-display-panel-service-ng1.component';
 import { ComponentsModalInsetPanelNg1Component } from './modal-inset-panel-ng1/item-display-panel-ng1.component';
 import { ComponentsSideInsetPanelNg1Component } from './side-inset-panel-ng1/side-inset-panel-ng1.component';
+import { ComponentsItemDisplayPanelComponent } from './item-display-panel/item-display-panel.component';
 import { WrappersModule } from '../../../../wrappers.module';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { CommonModule } from '@angular/common';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 const SECTIONS = [
     ComponentsCollapsiblePanelsNg1Component,
+    ComponentsItemDisplayPanelComponent,
     ComponentsItemDisplayPanelNg1Component,
     ComponentsItemDisplayPanelServiceNg1Component,
     ComponentsModalInsetPanelNg1Component,
@@ -35,6 +39,8 @@ const ROUTES = [
         WrappersModule,
         TabsModule,
         DocumentationComponentsModule,
+        CommonModule,
+        ModalModule.forRoot(),
         RouterModule.forChild(ROUTES)
     ],
     exports: SECTIONS,
