@@ -33,7 +33,7 @@
     </table>
 </div>
 
-<div class="modal item-display-panel fade col-lg-6 col-md-7 col-sm-9 col-xs-10" bsModal #staticModal="bs-modal" [config]="{backdrop: false, ignoreBackdropClick: true}"
+<!--<div class="modal item-display-panel fade col-lg-6 col-md-7 col-sm-9 col-xs-10" bsModal #staticModal="bs-modal" [config]="{backdrop: false, ignoreBackdropClick: true}"
      tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -49,4 +49,28 @@
       </div>
     </div>
   </div>
-</div>
+</div>-->
+
+<!--<ux-item-display-panel #panel="ux-item-display-panel" [(show)]="show" heading="document 1">
+
+    <ux-item-display-panel-content>
+        
+    </ux-item-display-panel-content>
+
+    <ux-item-display-panel-footer>
+        <button (click)="panel.hide()"></button>
+    </ux-item-display-panel-footer>
+
+</ux-item-display-panel>-->
+
+<ux-item-display-panel top="53" shadow="true">
+
+    <ux-item-display-panel-content>
+        <p style="background: #00ff00">Content</p>
+    </ux-item-display-panel-content>
+
+    <ux-item-display-panel-footer>
+        <p style="background: #0000ff">Footer</p>
+    </ux-item-display-panel-footer>
+
+</ux-item-display-panel>

@@ -1,0 +1,21 @@
+<div class="item-display-panel" [style.top]="top" [style.height]="height">
+
+    <div class="item-display-panel-header">
+        <div class="heading-flex-box">
+            <h3>Test Heading</h3>
+
+            <span tabindex="0">
+                <i class="hpe-icon hpe-close"></i>
+            </span>
+        </div>
+    </div>
+
+    <div class="item-display-panel-content">
+        <ng-content select="ux-item-display-panel-content"></ng-content>
+    </div>
+
+    <div class="item-display-panel-footer">
+        <ng-content select="ux-item-display-panel-footer"></ng-content>
+    </div>
+
+</div>

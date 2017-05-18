@@ -14,6 +14,7 @@ import { WrappersModule } from '../../../../wrappers.module';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { CommonModule } from '@angular/common';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { ItemDisplayPanelModule } from '../../../../../../src/components/item-display-panel/index';
 
 const SECTIONS = [
     ComponentsCollapsiblePanelsNg1Component,
@@ -40,6 +41,7 @@ const ROUTES = [
         TabsModule,
         DocumentationComponentsModule,
         CommonModule,
+        ItemDisplayPanelModule,
         ModalModule.forRoot(),
         RouterModule.forChild(ROUTES)
     ],
