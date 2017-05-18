@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr class="clickable single-select" *ngFor="let item of items">
+            <tr class="clickable single-select" *ngFor="let item of items" (click)="staticModal.show()">
                 <td class="text-center">
                     <div class="listview-page-icon"></div>
                 </td>
@@ -33,7 +33,7 @@
     </table>
 </div>
 
-<!--<div class="modal fade" bsModal #staticModal="bs-modal" [config]="{backdrop: 'static'}"
+<div class="modal item-display-panel fade col-lg-6 col-md-7 col-sm-9 col-xs-10" bsModal #staticModal="bs-modal" [config]="{backdrop: false, ignoreBackdropClick: true}"
      tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -49,4 +49,4 @@
       </div>
     </div>
   </div>
-</div>-->
+</div>
