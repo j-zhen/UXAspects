@@ -1,4 +1,4 @@
-import { Component, Directive, Input, SimpleChange, ViewChild, ElementRef } from '@angular/core';
+import { Component, Directive, Input, SimpleChange } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs/Observable';
 
@@ -19,10 +19,6 @@ export class ItemDisplayPanelComponent {
     @Input() animate: boolean;
 
     height: string;
-    
-    constructor(private elementRef: ElementRef) {
-    }
-   
 
     ngOnChanges(changes: {[top: number]: SimpleChange}) {
         this.height = 'calc(100% - ' + this.top + 'px)';
