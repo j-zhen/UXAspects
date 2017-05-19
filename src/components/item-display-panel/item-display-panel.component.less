@@ -1,4 +1,4 @@
-.item-display-panel {
+.ux-item-display-panel {
     box-shadow: 1px 0px 20px 0px @display-panel-shadow;
     width: 50%;
     height: 100%;
@@ -9,6 +9,16 @@
     color: @display-panel-color;
     border-left: 1px solid @display-panel-border;
     z-index: @display-panel-z-index;
+    left: 50%;
+
+    &.animate {
+        transition: left 0.4s;
+    }
+
+    &.item-display-panel-hide {
+        left: 100%;
+        box-shadow: none;
+    }
 
     .item-display-panel-header {
         min-height: 60px;
@@ -42,9 +52,5 @@
         margin-top: 5px;
         bottom: 0;
         position: absolute;
-    }
-
-    &.item-display-panel-hide {
-        display: none;
     }
 }
