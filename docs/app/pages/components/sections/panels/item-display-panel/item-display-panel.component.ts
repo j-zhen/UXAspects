@@ -10,8 +10,18 @@ import 'chance';
 @DocumentationSectionComponent('ComponentsItemDisplayPanelComponent')
 export class ComponentsItemDisplayPanelComponent {
 
-    togglePanel() {
-        console.log('togglePanel');
+    visible = false;
+    title = 'This is a test title';
+    top = 53;
+
+    test() {
+        if (this.top === 53) {
+            this.top = 200;
+            this.title = 'changed it'; 
+        } else {
+            this.top = 53;
+            this.title = 'changed it again';
+        }
     }
 
     items = [{
