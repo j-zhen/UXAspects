@@ -1,4 +1,5 @@
-import { Component, Directive, ContentChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, Directive, ContentChildren, QueryList, ElementRef, OnInit, OnDestroy, Input } from '@angular/core';
+import { PdfExportService } from './pdf-export.service';
 
 @Directive({
     selector: '[pdfExportBox]',
@@ -18,9 +19,20 @@ export class PdfExportBoxDirective {
 @Directive({
     selector: '[pdfExportItem]'
 })
-export class PdfExportItemDirective {
+export class PdfExportItemDirective implements OnInit, OnDestroy {
 
-    constructor(private _elementRef: ElementRef) { }
+    @Input() row: number;
+    @Input() columns: number;
+
+    constructor(private _elementRef: ElementRef, private _pdfExportService: PdfExportService) { }
+
+    ngOnInit(): void {
+        this._pdfExportService.registerItem(this);
+    }
+
+    ngOnDestroy(): void {
+        this._pdfExportService.unregisterItem(this);
+    }
 
     getElement(): HTMLElement {
         return this._elementRef.nativeElement as HTMLElement;

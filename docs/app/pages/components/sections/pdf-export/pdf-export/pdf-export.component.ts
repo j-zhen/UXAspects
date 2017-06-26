@@ -3,6 +3,7 @@ import { DocumentationSectionComponent } from '../../../../../decorators/documen
 import { BaseChartDirective } from 'ng2-charts';
 import { ColorService } from '../../../../../../../src/index';
 import { Chart } from 'chart.js';
+import { PdfExportService } from '../../../../../../../src/components/pdf-export/index';
 
 @Component({
     selector: 'uxd-components-pdf-export',
@@ -25,7 +26,7 @@ export class ComponentsPdfExportComponent {
     barChartLegend: boolean = false;
     barChartColors: any;
 
-    constructor(colorService: ColorService) {
+    constructor(colorService: ColorService, private _pdfExportService: PdfExportService) {
 
         // Prepare colors used in chart
         let borderColor = colorService.getColor('grey2').setAlpha(0.5).toRgba();
@@ -107,8 +108,9 @@ export class ComponentsPdfExportComponent {
         });
     }
 
-    openIframe() {
-
+    getDocument() {
+        let output = this._pdfExportService.getDocument();
+        // debugger;
     }
 
     openWindow() {

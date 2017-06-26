@@ -7,7 +7,7 @@
         </div>
     </div>
 
-    <div class="demo-chart-container" pdfExportItem>
+    <div class="demo-chart-container" pdfExportItem row="0" columns="12">
 
         <canvas baseChart 
                 [datasets]="barChartData" 
@@ -20,7 +20,7 @@
 
     </div>
 
-    <table class="table table-hover" pdfExportItem>
+    <table class="table table-hover" pdfExportItem row="1" columns="6">
         <thead>
             <tr>
                 <th>#</th>
@@ -72,10 +72,15 @@
             </tr>
         </tbody>
     </table>
+
+    <div style="width: 100%;height: 100%; background-color: cornflowerBlue;" pdfExportItem row="1" columns="6"></div>
+
+
     <button class="btn btn-primary" pdfExportItem>test1</button>
     <button class="btn btn-primary" pdfExportItem>test2</button>
 
 </ux-pdf-export-container>
 
+<button class="btn btn-secondary" (click)="getDocument()">Get Document</button>
 <button class="btn btn-secondary" (click)="pdfExport.showIframe()">Show Ifame</button>
 <button class="btn btn-secondary" (click)="pdfExport.openWindow()">Show in new window</button>
