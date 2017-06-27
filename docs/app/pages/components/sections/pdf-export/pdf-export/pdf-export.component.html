@@ -1,8 +1,4 @@
-<h4>Demo</h4>
-
-<ux-pdf-export-container #pdfExport>
-
-    <ux-dashboard class="customizable-dashboard" [options]="options">
+    <!--<ux-dashboard class="customizable-dashboard" [options]="options">
 
     <ux-dashboard-widget id="analytics-1-widget" colSpan="4" rowSpan="2" [resizable]="true">
         <div class="widget-content" ux-dashboard-widget-drag-handle>
@@ -84,9 +80,8 @@
         </div>
     </ux-dashboard-widget>
 
-</ux-dashboard>
+</ux-dashboard>-->
 
-</ux-pdf-export-container>
 
 <!--<div *ngFor="let item of data">
     <h1></h1>
@@ -99,6 +94,7 @@
 </ng-template>-->
 
 <!--<ng-template pdfExportItem [data]="[]">-->
+
 <ng-template pdfExportItem>
      <table class="table table-hover">
         <thead>
@@ -154,6 +150,5 @@
     </table>
 </ng-template>
 
+
 <button class="btn btn-secondary" (click)="getDocument()">Get Document</button>
-<button class="btn btn-secondary" (click)="pdfExport.showIframe()">Show Ifame</button>
-<button class="btn btn-secondary" (click)="pdfExport.openWindow()">Show in new window</button>
