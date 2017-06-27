@@ -1,4 +1,4 @@
-import { Component, Directive, ContentChildren, QueryList, ElementRef, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, Directive, ContentChildren, QueryList, ElementRef, OnInit, OnDestroy, Input, Renderer2, ViewChild, TemplateRef, ViewChildren } from '@angular/core';
 import { PdfExportService } from './pdf-export.service';
 
 @Directive({
@@ -23,10 +23,15 @@ export class PdfExportItemDirective implements OnInit, OnDestroy {
 
     @Input() row: number;
     @Input() columns: number;
+    @Input() pdfExportOnly: boolean;
 
-    constructor(private _elementRef: ElementRef, private _pdfExportService: PdfExportService) { }
+    constructor(private _elementRef: ElementRef, private _pdfExportService: PdfExportService, private _renderer: Renderer2) { }
 
     ngOnInit(): void {
+
+        if (this.pdfExportOnly) {
+            this._renderer.setStyle(this._elementRef.nativeElement, 'display', 'none');
+        }
         this._pdfExportService.registerItem(this);
     }
 

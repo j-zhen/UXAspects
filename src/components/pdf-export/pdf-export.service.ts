@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Renderer2 } from '@angular/core';
 import { PdfExportItemDirective } from './pdf-export-container.component';
 
 @Injectable()
@@ -18,7 +18,9 @@ export class PdfExportService {
         }
     }
 
-    getDocument(): HTMLDivElement[] {
+    getDocument(): HTMLHtmlElement {
+
+        
 
         // group items by row
         let groupings: PDFExportGrouping[] = [];
@@ -32,6 +34,7 @@ export class PdfExportService {
             } else {
                 row.items.push({ columns: item.columns, element: this.clone(item.getElement()) });
             }
+
         });
 
         // map to an html structure
@@ -46,22 +49,50 @@ export class PdfExportService {
                     column.classList.add(`col-md-${item.columns}`);
                 }
 
+                column.appendChild(item.element);
                 row.appendChild(column);
             });
+
 
             return row;
         });
 
-        return rows;
+ 
+        let head = this.cloneHead();
+        let body = document.createElement('body');
+        let htmlElement = document.createElement('html');
+
+        rows.forEach(row => {
+            body.appendChild(row);
+        });
+
+        htmlElement.appendChild(head);
+        htmlElement.appendChild(body);
+
+        return htmlElement;
+    }
+
+    private cloneHead(): HTMLHeadElement {
+        let head = document.head.cloneNode(true) as HTMLHeadElement;
+        return head;
     }
 
     private clone(element: HTMLElement): HTMLElement {
-        return element instanceof HTMLCanvasElement ? this.cloneCanvas(element) : this.cloneElement(element);
+        debugger;
+        return element instanceof HTMLCanvasElement ? this.cloneCanvas(element) 
+        : element.tagName === 'ng-template' ? this.template(element)
+        : this.cloneElement(element);
+    }
+
+    private template(element: HTMLElement): HTMLElement {
+        let x = element;
+        debugger;
+        return element;
     }
 
     private cloneCanvas(canvas: HTMLCanvasElement): HTMLImageElement {
-
-        // extract canvas image
+ 
+         // extract canvas image
         let imageUrl = canvas.toDataURL();
         let imgElement = document.createElement('img');
         imgElement.src = imageUrl;
@@ -71,8 +102,19 @@ export class PdfExportService {
         return imgElement;
     }
 
-    private cloneElement(element: HTMLElement): HTMLElement {
+    private replaceCanvas(source: HTMLCanvasElement, target: HTMLCanvasElement): void {
+        // extract canvas image
+        let imageUrl = source.toDataURL();
+        let imgElement = document.createElement('img');
+        imgElement.src = imageUrl;
 
+        target.parentNode.replaceChild(imgElement, target);
+
+        this.applyStyles(target, imgElement);
+    }
+
+    private cloneElement(element: HTMLElement): HTMLElement {
+    
         // create a duplicate of the element
         let clone = element.cloneNode(true) as HTMLElement;
 
@@ -83,14 +125,19 @@ export class PdfExportService {
     }
 
     private applyStyles(source: HTMLElement, target: HTMLElement): void {
-
+        
+        
         // iterate each style on the source element and apply it to the target
         for (let style of Object.keys(source.style)) {
-            target.style[style] = source.style[style];
+            target.style[style] = window.getComputedStyle(source)[style];
         }
 
         // apply styles to all children too
-        for (let childIdx = 0; childIdx < source.children.length; childIdx++) {
+        for (let childIdx = 0; childIdx < target.children.length; childIdx++) {
+            if (source.children.item(childIdx) instanceof HTMLCanvasElement) {
+                this.replaceCanvas(<HTMLCanvasElement>(source.children.item(childIdx)), <HTMLCanvasElement>(target.children.item(childIdx)));    
+            }
+
             this.applyStyles(source.children.item(childIdx) as HTMLElement, target.children.item(childIdx) as HTMLElement);
         }
     }

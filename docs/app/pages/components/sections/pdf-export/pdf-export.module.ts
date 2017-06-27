@@ -1,3 +1,5 @@
+import { DashboardModule } from './../../../../../../src/components/dashboard/dashboard.module';
+import { SparkModule } from './../../../../../../src/components/spark/spark.module';
 import { NgModule, ComponentFactoryResolver } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { DocumentationComponentsModule } from '../../../../components/components.module';
@@ -26,6 +28,8 @@ const ROUTES = [
         DocumentationComponentsModule,
         PdfExportModule,
         ChartsModule,
+        DashboardModule,
+        SparkModule,
         RouterModule.forChild(ROUTES)
     ],
     exports: SECTIONS,
