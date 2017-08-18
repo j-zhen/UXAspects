@@ -6,5 +6,8 @@ module.exports = {
     },
     licenses: {
         src: [ path.join(process.cwd(), 'scripts', 'licenses.js') ]
+    },
+    inlineComponentsLess: {
+        src: [ path.join(process.cwd(), 'scripts', 'inline-components-less.js') ]
     }
 };
