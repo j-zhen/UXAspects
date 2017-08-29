@@ -15,7 +15,9 @@
         "suppressImplicitAnyIndexErrors": true,
         "typeRoots": [
             "node_modules/@types/"
-        ]
+        ],
+        "outDir": "dist/docs-package",
+        "rootDir": "."
     },
     "files": [
         "docs/app/pages/pages.module.ts"
