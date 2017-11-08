@@ -50,7 +50,7 @@ exports.config = {
 
   // Spec patterns are relative to this config file
   // specs: ['dist/**/*e2e-spec.js'],
-  specs: ['dist/**/sliders*e2e-spec.js'],
+  specs: ['dist/**/*e2e-spec.js'],
 
   // For angular tests
   useAllAngular2AppRoots: true,
